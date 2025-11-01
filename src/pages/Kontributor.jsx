@@ -1,4 +1,41 @@
 import { useState } from "react";
+import { getSupabaseClient } from "../lib/supabaseClient";
+
+/*
+Supabase SQL (copy-paste into Supabase SQL editor)
+
+-- Table to store user contributions (pending review)
+create table contributions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
+  indonesian_word text not null,
+  minang_word text not null,
+  category text not null,
+  pronunciation text,
+  definition text not null,
+  example_1 text,
+  example_2 text,
+  example_3 text,
+  region text not null,
+  status text not null default 'pending',
+  created_at timestamptz default now()
+);
+
+-- Table for approved entries to be shown in the main kamus
+create table kamus (
+  id uuid primary key default gen_random_uuid(),
+  indonesian_word text not null,
+  minang_word text not null,
+  category text not null,
+  pronunciation text,
+  definition text not null,
+  example_1 text,
+  example_2 text,
+  example_3 text,
+  region text not null,
+  created_at timestamptz default now()
+);
+*/
 
 // Icon Components
 const BookIcon = () => (
@@ -47,6 +84,7 @@ function Kontributor() {
     indonesianWord: "",
     minangWord: "",
     category: "",
+    nagari: "",
     pronunciation: "",
     definition: "",
     examples: ["", "", ""],
@@ -64,6 +102,27 @@ function Kontributor() {
     { value: "kata_ganti", label: "Kata Ganti" },
     { value: "kata_keterangan", label: "Kata Keterangan" },
     { value: "kata_sambung", label: "Kata Sambung" },
+  ];
+
+  const nagariOptions = [
+    "Padang",
+    "Bukittinggi",
+    "Payakumbuh",
+    "Solok",
+    "Sawahlunto",
+    "Tanah Datar",
+    "Agam",
+    "Lima Puluh Kota",
+    "Pasaman",
+    "Pasaman Barat",
+    "Pesisir Selatan",
+    "Dharmasraya",
+    "Sijunjung",
+    "Solok Selatan",
+    "Padang Panjang",
+    "Pariaman",
+    "Padang Pariaman",
+    "Kepulauan Mentawai",
   ];
 
   const handleInputChange = (field, value) => {
@@ -95,11 +154,49 @@ function Kontributor() {
     }
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    // Prepare payload
+    const payload = {
+      user_id: storedUser?.id ?? null,
+      indonesian_word: String(formData.indonesianWord || "").trim(),
+      minang_word: String(formData.minangWord || "").trim(),
+      category: formData.category || null,
+      pronunciation: formData.pronunciation || null,
+      definition: String(formData.definition || "").trim(),
+      example_1: formData.examples?.[0] || null,
+      example_2: formData.examples?.[1] || null,
+      example_3: formData.examples?.[2] || null,
+      region: formData.nagari || null,
+    };
+
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from("contributions")
+        .insert([payload])
+        .select();
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        throw error;
+      }
+
+      // success
       setSubmitted(true);
-    }, 2000);
+      setFormData({
+        indonesianWord: "",
+        minangWord: "",
+        category: "",
+        nagari: "",
+        pronunciation: "",
+        definition: "",
+        examples: ["", "", ""],
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Gagal mengirim kontribusi. Silakan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -126,6 +223,7 @@ function Kontributor() {
                     indonesianWord: "",
                     minangWord: "",
                     category: "",
+                    nagari: "",
                     pronunciation: "",
                     definition: "",
                     examples: ["", "", ""],
@@ -173,6 +271,24 @@ function Kontributor() {
               Data Kata Utama
             </h2>
             <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-[#473322] mb-2">
+                  Nagari/Daerah *
+                </label>
+                <select
+                  required
+                  value={formData.nagari}
+                  onChange={(e) => handleInputChange("nagari", e.target.value)}
+                  className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                >
+                  <option value="">Pilih nagari/daerah</option>
+                  {nagariOptions.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-[#473322] mb-2">
@@ -185,7 +301,7 @@ function Kontributor() {
                     onChange={(e) =>
                       handleInputChange("indonesianWord", e.target.value)
                     }
-                    className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                    className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
                     placeholder="Contoh: rumah, makan, indah"
                   />
                 </div>
@@ -201,7 +317,7 @@ function Kontributor() {
                     onChange={(e) =>
                       handleInputChange("minangWord", e.target.value)
                     }
-                    className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                    className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
                     placeholder="Contoh: rumah, makan, rancak"
                   />
                 </div>
@@ -218,7 +334,7 @@ function Kontributor() {
                     onChange={(e) =>
                       handleInputChange("category", e.target.value)
                     }
-                    className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                    className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
                   >
                     {categories.map((category) => (
                       <option key={category.value} value={category.value}>
@@ -238,7 +354,7 @@ function Kontributor() {
                     onChange={(e) =>
                       handleInputChange("pronunciation", e.target.value)
                     }
-                    className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                    className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
                     placeholder="Contoh: /ru.mah/, /ran.cak/"
                   />
                 </div>
@@ -255,7 +371,7 @@ function Kontributor() {
                     handleInputChange("definition", e.target.value)
                   }
                   rows={4}
-                  className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
+                  className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm"
                   placeholder="Jelaskan arti kata ini dengan detail dan jelas..."
                 />
               </div>
@@ -270,7 +386,7 @@ function Kontributor() {
                     type="text"
                     value={example}
                     onChange={(e) => handleExampleChange(index, e.target.value)}
-                    className="w-full p-3 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm mb-3"
+                    className="w-full p-3 text-black border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-[#FF8D28] text-sm mb-3"
                     placeholder={`Contoh kalimat ${index + 1}`}
                   />
                 ))}

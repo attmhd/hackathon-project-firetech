@@ -11,7 +11,7 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [region, setRegion] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -34,7 +34,7 @@ export default function Register() {
     setErrorMsg("");
     setSubmitting(true);
     try {
-      await registerWithEmail({ name, email, region, password });
+      await registerWithEmail({ name, email, password });
       navigate(redirectTo, { replace: true });
     } catch (err) {
       setErrorMsg(err?.message || "Gagal mendaftar. Coba lagi.");
@@ -51,27 +51,6 @@ export default function Register() {
       setErrorMsg(err?.message || "Gagal keluar. Coba lagi.");
     }
   };
-
-  const nagariOptions = [
-    "Padang",
-    "Bukittinggi",
-    "Payakumbuh",
-    "Solok",
-    "Sawahlunto",
-    "Tanah Datar",
-    "Agam",
-    "Lima Puluh Kota",
-    "Pasaman",
-    "Pasaman Barat",
-    "Pesisir Selatan",
-    "Dharmasraya",
-    "Sijunjung",
-    "Solok Selatan",
-    "Padang Panjang",
-    "Pariaman",
-    "Padang Pariaman",
-    "Kepulauan Mentawai",
-  ];
 
   if (loading) {
     return (
@@ -165,7 +144,7 @@ export default function Register() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-12 rounded-xl border border-zinc-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
+              className="w-full text-black h-12 rounded-xl border border-zinc-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
               placeholder="Nama lengkap"
             />
           </div>
@@ -185,7 +164,7 @@ export default function Register() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-12 rounded-xl border border-zinc-300 bg-white px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
+                className="w-full h-12 text-black rounded-xl border border-zinc-300 bg-white px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
                 placeholder="nama@email.com"
               />
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
@@ -209,40 +188,13 @@ export default function Register() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full h-12 rounded-xl border border-zinc-300 bg-white px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
+                className="w-full h-12 text-black rounded-xl border border-zinc-300 bg-white px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
                 placeholder="Minimal 6 karakter"
               />
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
                 🔒
               </div>
             </div>
-          </div>
-
-          <div>
-            <label
-              className="block text-sm font-semibold text-[#473322] mb-2"
-              htmlFor="region"
-            >
-              Nagari/Daerah
-            </label>
-            <select
-              id="region"
-              required
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-              className="w-full h-12 rounded-xl border border-zinc-300 bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF8D28] focus:border-transparent"
-            >
-              <option value="">Pilih nagari/daerah</option>
-              {nagariOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <p className="mt-2 text-xs text-zinc-500">
-              Catatan: Akun akan dikunci ke nagari/daerah ini untuk memastikan
-              kontribusi sesuai asal daerah (region lock).
-            </p>
           </div>
 
           {errorMsg && (
@@ -253,7 +205,7 @@ export default function Register() {
 
           <button
             type="submit"
-            disabled={!name || !email || !password || !region || submitting}
+            disabled={!name || !email || !password || submitting}
             className={`w-full h-12 rounded-full font-bold text-white bg-linear-to-r from-[#FF8D28] to-[#FF7A1A] transition hover:shadow-lg hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed ${
               submitting ? "cursor-wait" : ""
             }`}

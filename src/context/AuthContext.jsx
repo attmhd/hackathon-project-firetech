@@ -7,6 +7,7 @@ import {
   useState,
   useCallback,
 } from "react";
+import { getSupabaseClient } from "../lib/supabaseClient";
 
 /**
  * Minimal email-based auth with region (nagari) lock.
@@ -119,106 +120,114 @@ function genUserId(email) {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const supabase = getSupabaseClient();
 
-  // Hydrate from storage on mount
+  function mapUser(user) {
+    if (!user) return null;
+    const meta = user.user_metadata || {};
+    return {
+      id: user.id,
+      name: meta.name || user.email?.split("@")[0] || "User",
+      email: user.email || "",
+      region: meta.region || null,
+      createdAt: user.created_at || null,
+    };
+  }
+
   useEffect(() => {
-    // Seed dummy users once on mount for demo/testing
-    ensureSeedUsers();
+    let mounted = true;
 
-    // Hydrate session
-    const u = readStoredUser();
-    if (u && u.email && u.region) {
-      setCurrentUser(u);
+    async function init() {
+      const { data, error } = await supabase.auth.getSession();
+      if (mounted) {
+        if (error) {
+          setCurrentUser(null);
+        } else {
+          const sessUser = data?.session?.user ?? null;
+          setCurrentUser(mapUser(sessUser));
+        }
+        setLoading(false);
+      }
     }
-    setLoading(false);
-  }, []);
 
-  // Persist on change
-  useEffect(() => {
-    writeStoredUser(currentUser);
-  }, [currentUser]);
+    init();
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(mapUser(session?.user ?? null));
+    });
+
+    return () => {
+      mounted = false;
+      sub?.subscription?.unsubscribe?.();
+    };
+  }, [supabase]);
 
   const isAuthenticated = !!currentUser;
 
   const registerWithEmail = useCallback(
-    async ({ name, email, region, password }) => {
+    async ({ name, email, password }) => {
       if (!name || !String(name).trim()) {
         throw new Error("Nama wajib diisi.");
       }
-      if (!isValidEmail(email)) {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())) {
         throw new Error("Email tidak valid.");
       }
-      if (!region || !String(region).trim()) {
-        throw new Error("Nagari/Daerah wajib dipilih.");
-      }
-
-      const users = readUsers();
-      const normalizedEmail = String(email).trim().toLowerCase();
-      if (users.some((u) => u.email === normalizedEmail)) {
-        throw new Error("Email sudah terdaftar. Silakan masuk.");
-      }
-
-      const pwd = String(password || "changeme");
+      const pwd = String(password || "");
       if (pwd.length < 6) {
-        // Long enough for demo; adjust as needed
         throw new Error("Password minimal 6 karakter.");
       }
 
-      const user = {
-        id: genUserId(email),
-        name: String(name).trim(),
-        email: normalizedEmail,
-        region: String(region).trim(),
-        createdAt: new Date().toISOString(),
-      };
+      const { data, error } = await supabase.auth.signUp({
+        email: String(email).trim().toLowerCase(),
+        password: pwd,
+        options: {
+          data: { name: String(name).trim() },
+        },
+      });
+      if (error) {
+        throw new Error(error.message || "Gagal mendaftar.");
+      }
 
-      // Store credential (client-side demo only)
-      const userRecord = { ...user, password: pwd };
-      writeUsers([...users, userRecord]);
+      const user = mapUser(data.user ?? data.session?.user ?? null);
+      if (user) {
+        setCurrentUser(user);
+      }
+      return { ok: true, user, needsVerification: !user };
+    },
+    [supabase],
+  );
 
+  const loginWithEmail = useCallback(
+    async ({ email, password }) => {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim())) {
+        throw new Error("Email tidak valid.");
+      }
+      if (!password || String(password).length === 0) {
+        throw new Error("Password wajib diisi.");
+      }
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: String(email).trim().toLowerCase(),
+        password: String(password),
+      });
+      if (error) {
+        throw new Error(error.message || "Kredensial salah.");
+      }
+      const user = mapUser(data.user ?? data.session?.user ?? null);
       setCurrentUser(user);
       return { ok: true, user };
     },
-    [],
+    [supabase],
   );
 
-  const loginWithEmail = useCallback(async ({ email, password }) => {
-    if (!isValidEmail(email)) {
-      throw new Error("Email tidak valid.");
-    }
-    if (!password || String(password).length === 0) {
-      throw new Error("Password wajib diisi.");
-    }
-
-    const users = readUsers();
-    const normalizedEmail = String(email).trim().toLowerCase();
-    const found = users.find((u) => u.email === normalizedEmail);
-
-    if (!found) {
-      throw new Error("Akun tidak ditemukan. Silakan daftar terlebih dahulu.");
-    }
-    if (found.password !== String(password)) {
-      throw new Error("Kredensial salah. Periksa email atau password Anda.");
-    }
-
-    const sessionUser = {
-      id: found.id,
-      name: found.name,
-      email: found.email,
-      region: found.region,
-      createdAt: found.createdAt,
-    };
-
-    setCurrentUser(sessionUser);
-    return { ok: true, user: sessionUser };
-  }, []);
-
   const logout = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw new Error(error.message || "Gagal logout.");
+    }
     setCurrentUser(null);
     return { ok: true };
-  }, []);
+  }, [supabase]);
 
-  // Region lock helpers
   const getRegion = useCallback(
     () => currentUser?.region || null,
     [currentUser],
@@ -227,37 +236,40 @@ export function AuthProvider({ children }) {
   const canContributeTo = useCallback(
     (targetRegion) => {
       if (!currentUser) return false;
-      return (
-        normalizeRegion(currentUser.region) === normalizeRegion(targetRegion)
-      );
+      const normalize = (v) =>
+        String(v || "")
+          .trim()
+          .toLowerCase();
+      return normalize(currentUser.region) === normalize(targetRegion);
     },
     [currentUser],
   );
 
-  // Optional profile updates (restrict region changes by default)
   const updateProfile = useCallback(
     async (updates) => {
       if (!currentUser) throw new Error("Belum login.");
-      const next = { ...currentUser };
-
+      const payload = { data: {} };
       if (typeof updates.name === "string") {
-        next.name = updates.name.trim();
+        payload.data.name = updates.name.trim();
       }
-
       if (
         typeof updates.region === "string" &&
         updates.region.trim() !== currentUser.region
       ) {
-        // Region lock by default: disallow region change
         throw new Error(
           "Perubahan nagari/daerah tidak diizinkan (region lock).",
         );
       }
 
-      setCurrentUser(next);
-      return { ok: true, user: next };
+      const { data, error } = await supabase.auth.updateUser(payload);
+      if (error) {
+        throw new Error(error.message || "Gagal memperbarui profil.");
+      }
+      const user = mapUser(data.user);
+      setCurrentUser(user);
+      return { ok: true, user };
     },
-    [currentUser],
+    [currentUser, supabase],
   );
 
   const value = useMemo(
@@ -265,13 +277,10 @@ export function AuthProvider({ children }) {
       currentUser,
       isAuthenticated,
       loading,
-      // auth actions
       registerWithEmail,
       loginWithEmail,
       logout,
-      // profile
       updateProfile,
-      // region lock
       getRegion,
       canContributeTo,
     }),
