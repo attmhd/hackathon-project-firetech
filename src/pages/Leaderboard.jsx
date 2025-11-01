@@ -1,7 +1,10 @@
 import { useState } from "react";
 
+import { Users, Book, CalendarDays } from "lucide-react";
+
 // Icon Components
-const TrophyIcon = () => (
+
+const UsersIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -13,6 +16,26 @@ const TrophyIcon = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+    <circle cx="9" cy="7" r="4"></circle>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+  </svg>
+);
+
+const TrophyIcon = ({ size = 24, className = "", strokeWidth = 2 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={strokeWidth}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
     <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
     <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
     <path d="M4 22h16"></path>
@@ -21,33 +44,28 @@ const TrophyIcon = () => (
   </svg>
 );
 
-const CrownIcon = () => (
+const CrownIcon = ({ size = 24, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="32"
-    height="32"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="currentColor"
+    className={className}
   >
     <path d="M12 6L13.13 8.09L15.5 7L14.37 9.09L17 10L14.37 10.91L15.5 13L13.13 11.91L12 14L10.87 11.91L8.5 13L9.63 10.91L7 10L9.63 9.09L8.5 7L10.87 8.09L12 6Z" />
     <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" />
   </svg>
 );
 
-const MedalIcon = ({ rank }) => (
+const MedalIcon = ({ rank, size = 24, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="currentColor"
-    className={`${
-      rank === 1
-        ? "text-yellow-500"
-        : rank === 2
-          ? "text-gray-400"
-          : "text-amber-600"
-    }`}
+    className={`${rank === 1 ? "text-yellow-500" : rank === 2 ? "text-gray-400" : "text-amber-600"} ${className}`}
   >
     <circle cx="12" cy="12" r="10" />
     <text
@@ -61,47 +79,36 @@ const MedalIcon = ({ rank }) => (
   </svg>
 );
 
-const StarIcon = () => (
+const BookIcon = ({ size = 20, className = "", strokeWidth = 2 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className="text-yellow-500"
-  >
-    <path d="M12 2l3.09 6.26L22 9l-5 4.87 1.18 6.88L12 17.77l-6.18 2.98L7 14.87 2 9l6.91-1.74L12 2z" />
-  </svg>
-);
-
-const BookIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
   </svg>
 );
 
-const CalendarIcon = () => (
+const CalendarIcon = ({ size = 20, className = "", strokeWidth = 2 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"
+    className={className}
   >
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -237,37 +244,10 @@ function Leaderboard() {
     },
   ];
 
-  const getBadgeColor = (badge) => {
-    switch (badge) {
-      case "Legend Contributor":
-        return "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white";
-      case "Master Contributor":
-        return "bg-gradient-to-r from-purple-400 to-purple-600 text-white";
-      case "Expert Contributor":
-        return "bg-gradient-to-r from-blue-400 to-blue-600 text-white";
-      case "Senior Contributor":
-        return "bg-gradient-to-r from-green-400 to-green-600 text-white";
-      case "Active Contributor":
-        return "bg-gradient-to-r from-orange-400 to-orange-600 text-white";
-      case "Rising Star":
-        return "bg-gradient-to-r from-pink-400 to-pink-600 text-white";
-      default:
-        return "bg-gray-500 text-white";
-    }
-  };
-
   const getRankIcon = (rank) => {
-    if (rank === 1) return <CrownIcon />;
-    if (rank <= 3) return <MedalIcon rank={rank} />;
+    if (rank === 1) return <CrownIcon size={24} />;
+    if (rank <= 3) return <MedalIcon rank={rank} size={24} />;
     return <span className="text-2xl font-bold text-zinc-400">#{rank}</span>;
-  };
-
-  const getStars = (rank) => {
-    if (rank === 1) return 5;
-    if (rank === 2) return 4;
-    if (rank === 3) return 3;
-    if (rank <= 5) return 2;
-    return 1;
   };
 
   return (
@@ -275,9 +255,9 @@ function Leaderboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] rounded-2xl mb-6">
-            <TrophyIcon />
-          </div>
+          {/* <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] rounded-2xl mb-6">
+            <TrophyIcon size={28} className="text-[#473322]" />
+          </div>*/}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#473322] mb-4">
             🏆 Leaderboard Kontributor
           </h1>
@@ -289,6 +269,7 @@ function Leaderboard() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+          {/* Total Kontributor */}
           <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -296,10 +277,12 @@ function Leaderboard() {
                 <p className="text-2xl font-bold text-[#473322]">500+</p>
               </div>
               <div className="w-12 h-12 bg-[#E6B17E]/20 rounded-xl flex items-center justify-center">
-                <span className="text-2xl">👥</span>
+                <Users size={24} className="text-[#473322]" />
               </div>
             </div>
           </div>
+
+          {/* Total Kata */}
           <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -307,10 +290,12 @@ function Leaderboard() {
                 <p className="text-2xl font-bold text-[#473322]">6,847</p>
               </div>
               <div className="w-12 h-12 bg-[#E6B17E]/20 rounded-xl flex items-center justify-center">
-                <BookIcon />
+                <Book size={24} className="text-[#473322]" />
               </div>
             </div>
           </div>
+
+          {/* Minggu Ini */}
           <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -318,7 +303,7 @@ function Leaderboard() {
                 <p className="text-2xl font-bold text-[#473322]">124</p>
               </div>
               <div className="w-12 h-12 bg-[#E6B17E]/20 rounded-xl flex items-center justify-center">
-                <CalendarIcon />
+                <CalendarDays size={24} className="text-[#473322]" />
               </div>
             </div>
           </div>
@@ -338,7 +323,7 @@ function Leaderboard() {
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   timeFilter === filter.value
                     ? "bg-[#FF8D28] text-white shadow-md"
-                    : "text-zinc-600 hover:text-[#FF8D28]"
+                    : "text-whie hover:text-[#FF8D28]"
                 }`}
               >
                 {filter.label}
@@ -361,7 +346,7 @@ function Leaderboard() {
                     {topContributors[1].avatar}
                   </div>
                   <div className="absolute -top-2 -right-2">
-                    <MedalIcon rank={2} />
+                    <MedalIcon rank={2} size={20} />
                   </div>
                 </div>
                 <h3 className="font-bold text-[#473322] text-lg mb-1">
@@ -374,11 +359,6 @@ function Leaderboard() {
                   {topContributors[1].wordCount.toLocaleString()}
                 </div>
                 <p className="text-sm text-zinc-600">kata</p>
-                <div className="flex justify-center mt-3">
-                  {Array.from({ length: getStars(2) }).map((_, i) => (
-                    <StarIcon key={i} />
-                  ))}
-                </div>
               </div>
             </div>
 
@@ -387,7 +367,7 @@ function Leaderboard() {
               <div className="bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl p-6 text-center shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 relative">
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <div className="bg-yellow-500 text-white p-2 rounded-full">
-                    <CrownIcon />
+                    <CrownIcon size={24} />
                   </div>
                 </div>
                 <div className="relative mb-4 mt-6">
@@ -408,11 +388,6 @@ function Leaderboard() {
                   {topContributors[0].wordCount.toLocaleString()}
                 </div>
                 <p className="text-sm text-zinc-600">kata</p>
-                <div className="flex justify-center mt-3">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <StarIcon key={i} />
-                  ))}
-                </div>
               </div>
             </div>
 
@@ -424,7 +399,7 @@ function Leaderboard() {
                     {topContributors[2].avatar}
                   </div>
                   <div className="absolute -top-2 -right-2">
-                    <MedalIcon rank={3} />
+                    <MedalIcon rank={3} size={20} />
                   </div>
                 </div>
                 <h3 className="font-bold text-[#473322] text-lg mb-1">
@@ -437,11 +412,6 @@ function Leaderboard() {
                   {topContributors[2].wordCount.toLocaleString()}
                 </div>
                 <p className="text-sm text-zinc-600">kata</p>
-                <div className="flex justify-center mt-3">
-                  {Array.from({ length: getStars(3) }).map((_, i) => (
-                    <StarIcon key={i} />
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -451,7 +421,7 @@ function Leaderboard() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-[#E6B17E] to-[#FF8D28] px-6 py-4">
             <h2 className="text-xl font-bold text-white">
-              📊 Daftar Lengkap Kontributor Teratas
+              Daftar Lengkap Kontributor Teratas
             </h2>
           </div>
 
@@ -495,20 +465,6 @@ function Leaderboard() {
                         <p className="text-sm text-zinc-600">
                           {contributor.fullName} • {contributor.nagari}
                         </p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${getBadgeColor(contributor.badge)}`}
-                          >
-                            {contributor.badge}
-                          </span>
-                          <div className="flex">
-                            {Array.from({
-                              length: getStars(contributor.rank),
-                            }).map((_, i) => (
-                              <StarIcon key={i} />
-                            ))}
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -555,16 +511,18 @@ function Leaderboard() {
         <div className="text-center mt-12">
           <div className="bg-gradient-to-r from-[#E6B17E]/20 to-[#FF8D28]/20 rounded-2xl p-8 sm:p-12">
             <h3 className="text-2xl font-bold text-[#473322] mb-4">
-              🚀 Ingin Bergabung di Leaderboard?
+              Ingin Bergabung di Leaderboard?
             </h3>
             <p className="text-zinc-600 mb-6 max-w-2xl mx-auto">
               Mulai berkontribusi sekarang dan jadilah bagian dari komunitas
               pelestari bahasa Minangkabau. Setiap kata yang Anda sumbangkan
               akan membantu generasi mendatang mengenal warisan budaya kita.
             </p>
-            <button className="bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white px-8 py-3 rounded-full font-bold hover:shadow-lg hover:scale-105 transition-all duration-300">
-              🌟 Mulai Berkontribusi
-            </button>
+            <a href="/kontributor">
+              <button className="bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white px-8 py-3 rounded-full font-bold hover:shadow-lg hover:scale-105 transition-all duration-300">
+                🌟 Mulai Berkontribusi
+              </button>
+            </a>
           </div>
         </div>
       </div>

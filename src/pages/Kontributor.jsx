@@ -254,7 +254,7 @@ function Kontributor() {
             <BookIcon />
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#473322] mb-4">
-            📝 Kontribusi Kata Baru
+            Kontribusi Kata Baru
           </h1>
           <p className="text-base md:text-lg text-zinc-600 max-w-2xl mx-auto">
             Bantu melestarikan bahasa Minangkabau dengan menambahkan kata-kata

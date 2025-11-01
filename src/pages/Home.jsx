@@ -188,6 +188,7 @@ function Home() {
       title: "Audio Pronunciation",
       description: "Dengarkan pelafalan asli dari penutur bahasa Minang",
       icon: <SpeakerIcon />,
+      soon: true,
     },
     {
       title: "Kontribusi Terbuka",
@@ -239,10 +240,13 @@ function Home() {
                 </div>
 
                 {/* CTA Button */}
+
                 <div className="pt-6">
-                  <button className="w-full sm:w-auto h-11 sm:h-12 md:h-14 px-6 md:px-8 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white rounded-full font-bold text-sm md:text-base hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-lg">
-                    Eksplor Bahasa Sekarang
-                  </button>
+                  <a href="#">
+                    <button className="w-full sm:w-auto h-11 sm:h-12 md:h-14 px-6 md:px-8 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white rounded-full font-bold text-sm md:text-base hover:shadow-lg hover:scale-105 transition-all duration-300 shadow-lg">
+                      Eksplor Bahasa
+                    </button>
+                  </a>
                 </div>
               </div>
 
@@ -309,9 +313,19 @@ function Home() {
                 <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-[#E6B17E]/20 to-[#FF8D28]/20 rounded-xl sm:rounded-2xl text-[#FF8D28] mb-4 sm:mb-6">
                   {feature.icon}
                 </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#473322] mb-2 sm:mb-3">
-                  {feature.title}
-                </h3>
+
+                {/* Judul + Badge Soon */}
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#473322]">
+                    {feature.title}
+                  </h3>
+                  {feature.soon && (
+                    <span className="px-2 py-0.5 text-[10px] font-semibold uppercase bg-[#FF8D28]/10 text-[#FF8D28] rounded-full">
+                      Soon
+                    </span>
+                  )}
+                </div>
+
                 <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
                   {feature.description}
                 </p>
@@ -382,9 +396,11 @@ function Home() {
           </div>
 
           <div className="text-center mt-8 sm:mt-12">
-            <button className="w-full sm:w-auto h-11 sm:h-12 md:h-14 px-6 md:px-8 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white rounded-full font-bold text-sm md:text-base hover:shadow-lg hover:scale-105 transition-all duration-300">
-              Lihat Semua Kata
-            </button>
+            <a href="/kamus">
+              <button className="w-full sm:w-auto h-11 sm:h-12 md:h-14 px-6 md:px-8 bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white rounded-full font-bold text-sm md:text-base hover:shadow-lg hover:scale-105 transition-all duration-300">
+                Lihat Semua Kata
+              </button>
+            </a>
           </div>
         </div>
       </section>
@@ -397,8 +413,8 @@ function Home() {
           </h2>
           <p className="text-[#5C4634]/80 max-w-2xl mx-auto mb-10">
             Proyek ini bersifat terbuka untuk siapa pun yang ingin berkontribusi
-            — menambah kosakata, membagikan dialek, atau membantu pengembangan
-            teknologinya.
+            menambah kosakata, membagikan dialek, atau membantu pengembangan
+            platform ini.
           </p>
 
           <div className="grid md:grid-cols-2 gap-6 mb-10">
@@ -437,12 +453,13 @@ function Home() {
                     <Code2 className="w-5 h-5 text-[#FF8D28]" />
                   </div>
                   <h3 className="font-semibold text-lg text-[#5C4634]">
-                    Kontributor Developer
+                    Kontributor Teknologi
                   </h3>
                 </div>
                 <ul className="space-y-3 text-sm text-[#5C4634]/80">
                   <li className="flex items-center gap-2">
-                    <Bug className="w-4 h-4 text-[#FF8D28]" /> Perbaiki Bug
+                    <Bug className="w-4 h-4 text-[#FF8D28]" /> Perbaikian Bug /
+                    Pengembangan Fitur
                   </li>
                   <li className="flex items-center gap-2">
                     <Smartphone className="w-4 h-4 text-[#FF8D28]" /> Desain
@@ -450,19 +467,19 @@ function Home() {
                   </li>
                 </ul>
                 <a
-                  href="/kontributor"
+                  href="https://github.com/attmhd/hackathon-project-firetech"
                   className="mt-6 inline-flex items-center justify-center w-full h-11 rounded-lg bg-[#5C4634] text-white font-semibold hover:bg-[#4B3B2A] transition"
                 >
-                  Kontribusi Developer
+                  Kontribusi
                 </a>
               </div>
             </div>
           </div>
 
-          <button className="h-11 px-6 bg-white text-[#5C4634] border border-[#FF8D28]/20 rounded-full font-semibold hover:shadow transition">
+          {/* <button className="h-11 px-6 bg-white text-[#5C4634] border border-[#FF8D28]/20 rounded-full font-semibold hover:shadow transition">
             <FileText className="inline w-5 h-5 mr-2 text-[#FF8D28]" /> Baca
             Panduan Lengkap
-          </button>
+          </button>*/}
         </div>
       </section>
 
