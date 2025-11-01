@@ -1,16 +1,26 @@
-# React + Vite
+# 🏆 ML — Minang Language
+### Firetech Hackathon Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📖 Project Description
+**ML (Minang Language)** adalah proyek kamus bahasa Minang dengan berbagai ragam dialek daerah di **Sumatera Barat**.
+Konsepnya bersifat **open contributor**, bertujuan untuk menunjang *sustainability* budaya di tanah **West Sumatera** tercinta.
 
-Currently, two official plugins are available:
+## 🎯 Tujuan
+Proyek ini bertujuan untuk:
+- Melestarikan kosakata bahasa Minang agar tidak punah.
+- Membangun komunitas yang peduli terhadap bahasa dan budaya lokal.
+- Menjadi sumber referensi pendidikan dan gudang data bagi inovator lokal.
+- Mendukung pengembangan teknologi seperti *translator*, *text-to-speech (TTS)*, dan aplikasi pembelajaran bahasa Minang.
+- Memberikan dampak ekonomi tidak langsung melalui pengembangan dan kolaborasi komunitas.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌱 Fokus & Nilai
+Fokus keberlanjutan kami bersifat **jangka panjang**.
+Bagi kami, *smart solution* bukan hanya tentang **teknologinya**, tetapi juga tentang **solusi yang nyata**, **masyarakatnya**, dan **lingkungannya**.
 
-## React Compiler
+Produk kami mungkin tampak sederhana secara teknologi,
+namun kami yakin memiliki **dampak besar** terhadap permasalahan yang kami angkat.
+Karena bagi kami, **orientasi terhadap solusi jauh lebih penting daripada sekadar kemewahan teknologi.**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Author
+Natta Std

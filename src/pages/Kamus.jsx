@@ -106,187 +106,191 @@ const MapPinIcon = () => (
 function Kamus() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [expandedWord, setExpandedWord] = useState(null);
+
+  const [selectedWordId, setSelectedWordId] = useState(null);
   const [sortBy, setSortBy] = useState("alphabetical");
 
   // Mock dictionary data
-  const dictionaryData = [
-    {
-      id: 1,
-      indonesian: "Air",
-      category: "kata_benda",
-      pronunciation: "/a.ir/",
-      definition:
-        "Benda cair seperti yang biasa diminum, dipakai untuk mandi, mencuci, dan sebagainya.",
-      dialects: [
-        { region: "Padang", word: "Aia", pronunciation: "/a.ia/" },
-        { region: "Bukittinggi", word: "Aia", pronunciation: "/a.ia/" },
-        { region: "Payakumbuh", word: "Aia", pronunciation: "/a.ia/" },
-        { region: "Solok", word: "Aia", pronunciation: "/a.ia/" },
-      ],
-      examples: [
-        "Aia di sumua sangat jernih",
-        "Minum aia supayo sehat",
-        "Aia hujan mambasahi bumi",
-      ],
-      synonyms: ["cairan", "liquid"],
-      etymology: "Dari bahasa Proto-Melayu *air",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 2,
-      indonesian: "Makan",
-      category: "kata_kerja",
-      pronunciation: "/ma.kan/",
-      definition:
-        "Memasukkan makanan ke dalam mulut serta mengunyah dan menelannya.",
-      dialects: [
-        { region: "Padang", word: "Makan", pronunciation: "/ma.kan/" },
-        { region: "Bukittinggi", word: "Makan", pronunciation: "/ma.kan/" },
-        { region: "Payakumbuh", word: "Makan", pronunciation: "/ma.kan/" },
-        { region: "Solok", word: "Makan", pronunciation: "/ma.kan/" },
-      ],
-      examples: [
-        "Awak lah makan nasi",
-        "Makan bersama keluarga",
-        "Jam makan di rumah",
-      ],
-      synonyms: ["santap", "konsumsi"],
-      etymology: "Dari bahasa Proto-Melayu *makan",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 3,
-      indonesian: "Pergi",
-      category: "kata_kerja",
-      pronunciation: "/per.gi/",
-      definition: "Meninggalkan tempat; berangkat; berjalan meninggalkan.",
-      dialects: [
-        { region: "Padang", word: "Pai", pronunciation: "/pai/" },
-        { region: "Bukittinggi", word: "Pai", pronunciation: "/pai/" },
-        { region: "Payakumbuh", word: "Pai", pronunciation: "/pai/" },
-        { region: "Solok", word: "Pai", pronunciation: "/pai/" },
-      ],
-      examples: [
-        "Awak pai ka pasar",
-        "Pai jo hati-hati",
-        "Kapan pai ka rumah?",
-      ],
-      synonyms: ["berangkat", "tolak"],
-      etymology: "Dari bahasa Proto-Melayu *pərgi",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 4,
-      indonesian: "Indah",
-      category: "kata_sifat",
-      pronunciation: "/in.dah/",
-      definition: "Elok rupanya; molek; cantik; bagus benar.",
-      dialects: [
-        { region: "Padang", word: "Rancak", pronunciation: "/ran.cak/" },
-        { region: "Bukittinggi", word: "Rancak", pronunciation: "/ran.cak/" },
-        { region: "Payakumbuh", word: "Elok", pronunciation: "/e.lok/" },
-        { region: "Solok", word: "Rancak", pronunciation: "/ran.cak/" },
-      ],
-      examples: [
-        "Pemandangan tu rancak bana",
-        "Gadis tu rancak rupanyo",
-        "Rumah gadang rancak bana",
-      ],
-      synonyms: ["cantik", "elok", "bagus"],
-      etymology: "Rancak dari bahasa Minang kuno",
-      difficulty: "sedang",
-      frequency: "sedang",
-    },
-    {
-      id: 5,
-      indonesian: "Rumah",
-      category: "kata_benda",
-      pronunciation: "/ru.mah/",
-      definition: "Bangunan untuk tempat tinggal keluarga.",
-      dialects: [
-        { region: "Padang", word: "Rumah", pronunciation: "/ru.mah/" },
-        { region: "Bukittinggi", word: "Rumah", pronunciation: "/ru.mah/" },
-        { region: "Payakumbuh", word: "Rumah", pronunciation: "/ru.mah/" },
-        { region: "Solok", word: "Rumah", pronunciation: "/ru.mah/" },
-      ],
-      examples: [
-        "Rumah gadang di kampuang",
-        "Pulang ka rumah",
-        "Rumah tuo di nagari",
-      ],
-      synonyms: ["hunian", "tempat tinggal"],
-      etymology: "Dari bahasa Proto-Melayu *rumah",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 6,
-      indonesian: "Besar",
-      category: "kata_sifat",
-      pronunciation: "/be.sar/",
-      definition: "Lebih dari ukuran sedang; lawan dari kecil.",
-      dialects: [
-        { region: "Padang", word: "Gadang", pronunciation: "/ga.dang/" },
-        { region: "Bukittinggi", word: "Gadang", pronunciation: "/ga.dang/" },
-        { region: "Payakumbuh", word: "Besar", pronunciation: "/be.sar/" },
-        { region: "Solok", word: "Gadang", pronunciation: "/ga.dang/" },
-      ],
-      examples: [
-        "Rumah gadang di kampuang",
-        "Pohon gadang di halaman",
-        "Ikan gadang di sungai",
-      ],
-      synonyms: ["besar", "gede"],
-      etymology: "Gadang dari bahasa Minang asli",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 7,
-      indonesian: "Kecil",
-      category: "kata_sifat",
-      pronunciation: "/ke.cil/",
-      definition: "Tidak besar; berukuran lebih kecil dari biasa.",
-      dialects: [
-        { region: "Padang", word: "Ketek", pronunciation: "/ke.tek/" },
-        { region: "Bukittinggi", word: "Ketek", pronunciation: "/ke.tek/" },
-        { region: "Payakumbuh", word: "Ketek", pronunciation: "/ke.tek/" },
-        { region: "Solok", word: "Ciek", pronunciation: "/ci.ek/" },
-      ],
-      examples: [
-        "Anak ketek di siko",
-        "Rumah ketek di ujuang",
-        "Buah ketek di pokoknyo",
-      ],
-      synonyms: ["kecil", "kecik"],
-      etymology: "Ketek dari evolusi kata kecil",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-    {
-      id: 8,
-      indonesian: "Minum",
-      category: "kata_kerja",
-      pronunciation: "/mi.num/",
-      definition:
-        "Memasukkan air atau benda cair ke dalam mulut dan meneguknya.",
-      dialects: [
-        { region: "Padang", word: "Minum", pronunciation: "/mi.num/" },
-        { region: "Bukittinggi", word: "Minum", pronunciation: "/mi.num/" },
-        { region: "Payakumbuh", word: "Minum", pronunciation: "/mi.num/" },
-        { region: "Solok", word: "Tenggak", pronunciation: "/teng.gak/" },
-      ],
-      examples: ["Minum aia es", "Minum kopi pagi", "Minum teh hangat"],
-      synonyms: ["teguk", "hirup"],
-      etymology: "Dari bahasa Proto-Melayu *minum",
-      difficulty: "mudah",
-      frequency: "tinggi",
-    },
-  ];
+  const dictionaryData = useMemo(
+    () => [
+      {
+        id: 1,
+        indonesian: "Air",
+        category: "kata_benda",
+        pronunciation: "/a.ir/",
+        definition:
+          "Benda cair seperti yang biasa diminum, dipakai untuk mandi, mencuci, dan sebagainya.",
+        dialects: [
+          { region: "Padang", word: "Aia", pronunciation: "/a.ia/" },
+          { region: "Bukittinggi", word: "Aia", pronunciation: "/a.ia/" },
+          { region: "Payakumbuh", word: "Aia", pronunciation: "/a.ia/" },
+          { region: "Solok", word: "Aia", pronunciation: "/a.ia/" },
+        ],
+        examples: [
+          "Aia di sumua sangat jernih",
+          "Minum aia supayo sehat",
+          "Aia hujan mambasahi bumi",
+        ],
+        synonyms: ["cairan", "liquid"],
+        etymology: "Dari bahasa Proto-Melayu *air",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 2,
+        indonesian: "Makan",
+        category: "kata_kerja",
+        pronunciation: "/ma.kan/",
+        definition:
+          "Memasukkan makanan ke dalam mulut serta mengunyah dan menelannya.",
+        dialects: [
+          { region: "Padang", word: "Makan", pronunciation: "/ma.kan/" },
+          { region: "Bukittinggi", word: "Makan", pronunciation: "/ma.kan/" },
+          { region: "Payakumbuh", word: "Makan", pronunciation: "/ma.kan/" },
+          { region: "Solok", word: "Makan", pronunciation: "/ma.kan/" },
+        ],
+        examples: [
+          "Awak lah makan nasi",
+          "Makan bersama keluarga",
+          "Jam makan di rumah",
+        ],
+        synonyms: ["santap", "konsumsi"],
+        etymology: "Dari bahasa Proto-Melayu *makan",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 3,
+        indonesian: "Pergi",
+        category: "kata_kerja",
+        pronunciation: "/per.gi/",
+        definition: "Meninggalkan tempat; berangkat; berjalan meninggalkan.",
+        dialects: [
+          { region: "Padang", word: "Pai", pronunciation: "/pai/" },
+          { region: "Bukittinggi", word: "Pai", pronunciation: "/pai/" },
+          { region: "Payakumbuh", word: "Pai", pronunciation: "/pai/" },
+          { region: "Solok", word: "Pai", pronunciation: "/pai/" },
+        ],
+        examples: [
+          "Awak pai ka pasar",
+          "Pai jo hati-hati",
+          "Kapan pai ka rumah?",
+        ],
+        synonyms: ["berangkat", "tolak"],
+        etymology: "Dari bahasa Proto-Melayu *pərgi",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 4,
+        indonesian: "Indah",
+        category: "kata_sifat",
+        pronunciation: "/in.dah/",
+        definition: "Elok rupanya; molek; cantik; bagus benar.",
+        dialects: [
+          { region: "Padang", word: "Rancak", pronunciation: "/ran.cak/" },
+          { region: "Bukittinggi", word: "Rancak", pronunciation: "/ran.cak/" },
+          { region: "Payakumbuh", word: "Elok", pronunciation: "/e.lok/" },
+          { region: "Solok", word: "Rancak", pronunciation: "/ran.cak/" },
+        ],
+        examples: [
+          "Pemandangan tu rancak bana",
+          "Gadis tu rancak rupanyo",
+          "Rumah gadang rancak bana",
+        ],
+        synonyms: ["cantik", "elok", "bagus"],
+        etymology: "Rancak dari bahasa Minang kuno",
+        difficulty: "sedang",
+        frequency: "sedang",
+      },
+      {
+        id: 5,
+        indonesian: "Rumah",
+        category: "kata_benda",
+        pronunciation: "/ru.mah/",
+        definition: "Bangunan untuk tempat tinggal keluarga.",
+        dialects: [
+          { region: "Padang", word: "Rumah", pronunciation: "/ru.mah/" },
+          { region: "Bukittinggi", word: "Rumah", pronunciation: "/ru.mah/" },
+          { region: "Payakumbuh", word: "Rumah", pronunciation: "/ru.mah/" },
+          { region: "Solok", word: "Rumah", pronunciation: "/ru.mah/" },
+        ],
+        examples: [
+          "Rumah gadang di kampuang",
+          "Pulang ka rumah",
+          "Rumah tuo di nagari",
+        ],
+        synonyms: ["hunian", "tempat tinggal"],
+        etymology: "Dari bahasa Proto-Melayu *rumah",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 6,
+        indonesian: "Besar",
+        category: "kata_sifat",
+        pronunciation: "/be.sar/",
+        definition: "Lebih dari ukuran sedang; lawan dari kecil.",
+        dialects: [
+          { region: "Padang", word: "Gadang", pronunciation: "/ga.dang/" },
+          { region: "Bukittinggi", word: "Gadang", pronunciation: "/ga.dang/" },
+          { region: "Payakumbuh", word: "Besar", pronunciation: "/be.sar/" },
+          { region: "Solok", word: "Gadang", pronunciation: "/ga.dang/" },
+        ],
+        examples: [
+          "Rumah gadang di kampuang",
+          "Pohon gadang di halaman",
+          "Ikan gadang di sungai",
+        ],
+        synonyms: ["besar", "gede"],
+        etymology: "Gadang dari bahasa Minang asli",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 7,
+        indonesian: "Kecil",
+        category: "kata_sifat",
+        pronunciation: "/ke.cil/",
+        definition: "Tidak besar; berukuran lebih kecil dari biasa.",
+        dialects: [
+          { region: "Padang", word: "Ketek", pronunciation: "/ke.tek/" },
+          { region: "Bukittinggi", word: "Ketek", pronunciation: "/ke.tek/" },
+          { region: "Payakumbuh", word: "Ketek", pronunciation: "/ke.tek/" },
+          { region: "Solok", word: "Ciek", pronunciation: "/ci.ek/" },
+        ],
+        examples: [
+          "Anak ketek di siko",
+          "Rumah ketek di ujuang",
+          "Buah ketek di pokoknyo",
+        ],
+        synonyms: ["kecil", "kecik"],
+        etymology: "Ketek dari evolusi kata kecil",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+      {
+        id: 8,
+        indonesian: "Minum",
+        category: "kata_kerja",
+        pronunciation: "/mi.num/",
+        definition:
+          "Memasukkan air atau benda cair ke dalam mulut dan meneguknya.",
+        dialects: [
+          { region: "Padang", word: "Minum", pronunciation: "/mi.num/" },
+          { region: "Bukittinggi", word: "Minum", pronunciation: "/mi.num/" },
+          { region: "Payakumbuh", word: "Minum", pronunciation: "/mi.num/" },
+          { region: "Solok", word: "Tenggak", pronunciation: "/teng.gak/" },
+        ],
+        examples: ["Minum aia es", "Minum kopi pagi", "Minum teh hangat"],
+        synonyms: ["teguk", "hirup"],
+        etymology: "Dari bahasa Proto-Melayu *minum",
+        difficulty: "mudah",
+        frequency: "tinggi",
+      },
+    ],
+    [],
+  );
 
   const categories = [
     { value: "all", label: "Semua Kategori" },
@@ -297,11 +301,7 @@ function Kamus() {
     { value: "kata_ganti", label: "Kata Ganti" },
   ];
 
-  const sortOptions = [
-    { value: "alphabetical", label: "A-Z" },
-    { value: "frequency", label: "Populer" },
-    { value: "difficulty", label: "Tingkat Kesulitan" },
-  ];
+  const sortOptions = [{ value: "alphabetical", label: "A-Z" }];
 
   // Filter and sort dictionary data
   const filteredData = useMemo(() => {
@@ -322,19 +322,18 @@ function Kamus() {
       switch (sortBy) {
         case "alphabetical":
           return a.indonesian.localeCompare(b.indonesian);
-        case "frequency":
-          const frequencyOrder = { tinggi: 3, sedang: 2, rendah: 1 };
-          return frequencyOrder[b.frequency] - frequencyOrder[a.frequency];
-        case "difficulty":
-          const difficultyOrder = { mudah: 1, sedang: 2, sulit: 3 };
-          return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
         default:
           return 0;
       }
     });
 
     return filtered;
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [searchTerm, selectedCategory, sortBy, dictionaryData]);
+
+  const activeWord = useMemo(
+    () => dictionaryData.find((w) => w.id === selectedWordId) || null,
+    [selectedWordId, dictionaryData],
+  );
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -347,14 +346,7 @@ function Kamus() {
     return colors[category] || "bg-gray-100 text-gray-800";
   };
 
-  const getDifficultyColor = (difficulty) => {
-    const colors = {
-      mudah: "bg-green-100 text-green-800",
-      sedang: "bg-yellow-100 text-yellow-800",
-      sulit: "bg-red-100 text-red-800",
-    };
-    return colors[difficulty] || "bg-gray-100 text-gray-800";
-  };
+  // removed getDifficultyColor
 
   const formatCategory = (category) => {
     const labels = {
@@ -368,7 +360,7 @@ function Kamus() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white py-8 sm:py-12">
+    <div className="min-h-screen bg-linear-to-b from-orange-50 to-white py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12 sm:mb-16">
@@ -449,7 +441,7 @@ function Kamus() {
 
             {/* Results Count */}
             <div className="flex items-end">
-              <div className="bg-gradient-to-r from-[#E6B17E]/20 to-[#FF8D28]/10 rounded-xl p-4 w-full border border-[#E6B17E]/30">
+              <div className="bg-linear-to-r from-[#E6B17E]/20 to-[#FF8D28]/10 rounded-xl p-4 w-full border border-[#E6B17E]/30">
                 <div className="flex items-center justify-center">
                   <span className="text-2xl font-bold text-[#FF8D28] mr-2">
                     {filteredData.length}
@@ -464,7 +456,7 @@ function Kamus() {
         </div>
 
         {/* Dictionary Entries */}
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {filteredData.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
@@ -479,25 +471,28 @@ function Kamus() {
             filteredData.map((word) => (
               <div
                 key={word.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden"
               >
                 {/* Word Header */}
                 <div
-                  className="p-4 sm:p-6 cursor-pointer hover:bg-zinc-50 transition-colors"
-                  onClick={() =>
-                    setExpandedWord(expandedWord === word.id ? null : word.id)
-                  }
+                  className="p-4 sm:p-6 cursor-pointer"
+                  onClick={() => setSelectedWordId(word.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-xl sm:text-2xl font-bold text-[#473322]">
-                          {word.indonesian}
-                        </h3>
-                        <span className="text-sm text-zinc-500 font-mono">
-                          {word.pronunciation}
-                        </span>
-                        <button className="text-zinc-400 hover:text-[#FF8D28] transition-colors">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="min-w-0">
+                          <h3 className="text-lg sm:text-xl font-bold text-[#473322] truncate">
+                            {word.indonesian}
+                          </h3>
+                          <p className="text-[#FF8D28] font-semibold text-base sm:text-lg truncate">
+                            {word.dialects[0]?.word}
+                          </p>
+                          <span className="text-xs sm:text-sm text-zinc-500 font-mono">
+                            {word.dialects[0]?.pronunciation}
+                          </span>
+                        </div>
+                        <button className="text-zinc-400 hover:text-[#FF8D28] transition-colors p-1 sm:p-2 hover:bg-[#E6B17E]/10 rounded-full ml-2 shrink-0">
                           <SpeakerIcon />
                         </button>
                       </div>
@@ -508,113 +503,21 @@ function Kamus() {
                         >
                           {formatCategory(word.category)}
                         </span>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${getDifficultyColor(word.difficulty)}`}
-                        >
-                          {word.difficulty}
-                        </span>
-                        <span className="text-xs text-zinc-500">
-                          Frekuensi: {word.frequency}
-                        </span>
                       </div>
 
                       <p className="text-sm sm:text-base text-zinc-700 leading-relaxed">
                         {word.definition}
                       </p>
-                    </div>
 
-                    <div className="ml-4">
-                      <div
-                        className={`transform transition-transform ${expandedWord === word.id ? "rotate-180" : ""}`}
-                      >
-                        <ChevronDownIcon />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Expanded Details */}
-                {expandedWord === word.id && (
-                  <div className="border-t border-zinc-200 p-4 sm:p-6 bg-zinc-50">
-                    {/* Dialects */}
-                    <div className="mb-6">
-                      <h4 className="text-lg font-bold text-[#473322] mb-4 flex items-center">
-                        <MapPinIcon className="mr-2" />
-                        Dialek Daerah
-                      </h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {word.dialects.map((dialect, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-xl p-4 shadow-sm border border-zinc-200"
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <h5 className="font-semibold text-[#473322]">
-                                {dialect.region}
-                              </h5>
-                              <button className="text-zinc-400 hover:text-[#FF8D28] transition-colors">
-                                <SpeakerIcon />
-                              </button>
-                            </div>
-                            <p className="text-lg font-bold text-[#FF8D28] mb-1">
-                              {dialect.word}
-                            </p>
-                            <p className="text-sm text-zinc-500 font-mono">
-                              {dialect.pronunciation}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Examples */}
-                    <div className="mb-6">
-                      <h4 className="text-lg font-bold text-[#473322] mb-3">
-                        💬 Contoh Penggunaan
-                      </h4>
-                      <div className="space-y-2">
-                        {word.examples.map((example, index) => (
-                          <div
-                            key={index}
-                            className="bg-white rounded-lg p-3 border border-zinc-200"
-                          >
-                            <p className="text-[#473322] italic">"{example}"</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Additional Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Synonyms */}
-                      <div>
-                        <h4 className="text-lg font-bold text-[#473322] mb-3">
-                          🔗 Sinonim
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {word.synonyms.map((synonym, index) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1 bg-[#E6B17E]/20 text-[#473322] rounded-full text-sm"
-                            >
-                              {synonym}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Etymology */}
-                      <div>
-                        <h4 className="text-lg font-bold text-[#473322] mb-3">
-                          📖 Etimologi
-                        </h4>
-                        <p className="text-sm text-zinc-700 bg-white rounded-lg p-3 border border-zinc-200">
-                          {word.etymology}
+                      <div className="pt-2 border-t border-zinc-100">
+                        <p className="text-xs text-zinc-600">
+                          <span className="font-medium">Contoh:</span>{" "}
+                          {word.examples[0]}
                         </p>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             ))
           )}
@@ -623,9 +526,95 @@ function Kamus() {
         {/* Pagination or Load More */}
         {filteredData.length > 0 && (
           <div className="text-center mt-12">
-            <button className="bg-gradient-to-r from-[#FF8D28] to-[#FF7A1A] text-white px-8 py-3 rounded-full font-bold hover:shadow-lg hover:scale-105 transition-all duration-300">
+            <button className="bg-linear-to-r from-[#FF8D28] to-[#FF7A1A] text-white px-8 py-3 rounded-full font-bold hover:shadow-lg hover:scale-105 transition-all duration-300">
               Muat Lebih Banyak
             </button>
+          </div>
+        )}
+
+        {/* Modal: Word Detail */}
+        {activeWord && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setSelectedWordId(null)}
+            ></div>
+            <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+              <div className="flex items-start justify-between mb-4">
+                <div className="min-w-0">
+                  <h3 className="text-xl sm:text-2xl font-bold text-[#473322] truncate">
+                    {activeWord.indonesian}
+                  </h3>
+                  <p className="text-[#FF8D28] font-semibold text-lg truncate">
+                    {activeWord.dialects[0]?.word}
+                  </p>
+                  <span className="text-xs sm:text-sm text-zinc-500 font-mono">
+                    {activeWord.dialects[0]?.pronunciation}
+                  </span>
+                </div>
+                <button
+                  className="text-zinc-400 hover:text-[#FF8D28] p-2"
+                  onClick={() => setSelectedWordId(null)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <span className="px-3 py-1 rounded-full text-xs font-medium border border-zinc-200 text-[#473322]">
+                  {formatCategory(activeWord.category)}
+                </span>
+              </div>
+
+              <p className="text-sm sm:text-base text-zinc-700 leading-relaxed mb-6">
+                {activeWord.definition}
+              </p>
+
+              <div className="mb-6">
+                <h4 className="text-lg font-bold text-[#473322] mb-3 flex items-center">
+                  <span className="mr-2">📍</span>Dialek Daerah
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {activeWord.dialects.map((d, i) => (
+                    <div
+                      key={i}
+                      className="border border-zinc-200 rounded-lg p-3"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <h5 className="font-semibold text-[#473322]">
+                          {d.region}
+                        </h5>
+                        <button className="text-zinc-400 hover:text-[#FF8D28]">
+                          <SpeakerIcon />
+                        </button>
+                      </div>
+                      <p className="text-base font-bold text-[#FF8D28]">
+                        {d.word}
+                      </p>
+                      <p className="text-xs text-zinc-500 font-mono">
+                        {d.pronunciation}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-bold text-[#473322] mb-2">
+                  💬 Contoh Penggunaan
+                </h4>
+                <div className="space-y-2">
+                  {activeWord.examples.map((ex, i) => (
+                    <div
+                      key={i}
+                      className="bg-zinc-50 border border-zinc-200 rounded-md p-2"
+                    >
+                      <p className="text-[#473322] italic">"{ex}"</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
